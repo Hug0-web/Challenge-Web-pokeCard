@@ -14,7 +14,7 @@ class PokemonWebController extends AbstractController
     public function index(PokemonRepository $pokemonRepository, Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
-        $limit = 20;
+        $limit = 50; // Augmenté de 20 à 50
         $offset = ($page - 1) * $limit;
 
         $pokemons = $pokemonRepository->findBy([], ['name' => 'ASC'], $limit, $offset);

@@ -6,8 +6,9 @@ use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/pokemon')]
@@ -24,7 +25,8 @@ class PokemonController extends AbstractController
     #[Route('/import', name: 'api_pokemon_import', methods: ['POST'])]
     public function importCards(
         EntityManagerInterface $entityManager,
-        PokemonRepository $pokemonRepository
+        PokemonRepository $pokemonRepository,
+        Request $request
     ): JsonResponse {
         $httpClient = HttpClient::create();
 
@@ -36,47 +38,66 @@ class PokemonController extends AbstractController
             }
             $entityManager->flush();
 
-            $response = $httpClient->request('GET', self::API_URL . '/cards', [
-                'headers' => [
-                    'X-Api-Key' => $this->apiKey
-                ]
-            ]);
+            $page = 1;
+            $pageSize = 250; 
+            $totalImported = 0;
 
-            $data = $response->toArray();
+            do {
+                $response = $httpClient->request('GET', self::API_URL . '/cards', [
+                    'query' => [
+                        'page' => $page,
+                        'pageSize' => $pageSize
+                    ],
+                    'headers' => [
+                        'X-Api-Key' => $this->apiKey
+                    ]
+                ]);
 
-            foreach ($data['data'] as $cardData) {
-                $pokemon = new Pokemon();
-                $pokemon->setId($cardData['id']);
-                $pokemon->setName($cardData['name']);
-                $pokemon->setSupertype($cardData['supertype']);
-                $pokemon->setSubtypes($cardData['subtypes'] ?? []);
-                $pokemon->setHp($cardData['hp'] ?? null);
-                $pokemon->setTypes($cardData['types'] ?? []);
-                $pokemon->setEvolvesFrom($cardData['evolvesFrom'] ?? null);
-                $pokemon->setAbilities($cardData['abilities'] ?? []);
-                $pokemon->setAttacks($cardData['attacks'] ?? []);
-                $pokemon->setWeaknesses($cardData['weaknesses'] ?? []);
-                $pokemon->setRetreatCost($cardData['retreatCost'] ?? []);
-                $pokemon->setConvertedRetreatCost($cardData['convertedRetreatCost'] ?? null);
-                $pokemon->setSet($cardData['set'] ?? []);
-                $pokemon->setNumber($cardData['number'] ?? '');
-                $pokemon->setArtist($cardData['artist'] ?? '');
-                $pokemon->setRarity($cardData['rarity'] ?? '');
-                $pokemon->setFlavorText($cardData['flavorText'] ?? null);
-                $pokemon->setNationalPokedexNumbers($cardData['nationalPokedexNumbers'] ?? []);
-                $pokemon->setLegalities($cardData['legalities'] ?? []);
-                $pokemon->setImages($cardData['images'] ?? []);
-                $pokemon->setTcgplayer($cardData['tcgplayer'] ?? []);
-                $pokemon->setCardmarket($cardData['cardmarket'] ?? []);
+                $data = $response->toArray();
 
-                $entityManager->persist($pokemon);
-            }
+                foreach ($data['data'] as $cardData) {
+                    $pokemon = new Pokemon();
+                    $pokemon->setId($cardData['id']);
+                    $pokemon->setName($cardData['name']);
+                    $pokemon->setSupertype($cardData['supertype']);
+                    $pokemon->setSubtypes($cardData['subtypes'] ?? []);
+                    $pokemon->setHp($cardData['hp'] ?? null);
+                    $pokemon->setTypes($cardData['types'] ?? []);
+                    $pokemon->setEvolvesFrom($cardData['evolvesFrom'] ?? null);
+                    $pokemon->setAbilities($cardData['abilities'] ?? []);
+                    $pokemon->setAttacks($cardData['attacks'] ?? []);
+                    $pokemon->setWeaknesses($cardData['weaknesses'] ?? []);
+                    $pokemon->setRetreatCost($cardData['retreatCost'] ?? []);
+                    $pokemon->setConvertedRetreatCost($cardData['convertedRetreatCost'] ?? null);
+                    $pokemon->setSet($cardData['set'] ?? []);
+                    $pokemon->setNumber($cardData['number'] ?? '');
+                    $pokemon->setArtist($cardData['artist'] ?? '');
+                    $pokemon->setRarity($cardData['rarity'] ?? '');
+                    $pokemon->setFlavorText($cardData['flavorText'] ?? null);
+                    $pokemon->setNationalPokedexNumbers($cardData['nationalPokedexNumbers'] ?? []);
+                    $pokemon->setLegalities($cardData['legalities'] ?? []);
+                    $pokemon->setImages($cardData['images'] ?? []);
+                    $pokemon->setTcgplayer($cardData['tcgplayer'] ?? []);
+                    $pokemon->setCardmarket($cardData['cardmarket'] ?? []);
 
-            $entityManager->flush();
+                    $entityManager->persist($pokemon);
+                }
+
+                $entityManager->flush();
+                $totalImported += count($data['data']);
+
+                $this->addFlash('info', "Imported page $page: " . count($data['data']) . " cards");
+
+                $page++;
+
+                sleep(1);
+
+            } while (count($data['data']) == $pageSize);
 
             return $this->json([
                 'message' => 'Cards imported successfully', 
-                'count' => count($data['data'])
+                'count' => $totalImported,
+                'pages' => $page - 1
             ]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], 500);
