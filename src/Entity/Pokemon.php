@@ -2,115 +2,78 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use App\Repository\PokemonRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
-#[ApiResource(
-    operations: [
-        new Get(normalizationContext: ['groups' => ['pokemon:read']]),
-        new GetCollection(normalizationContext: ['groups' => ['pokemon:read']]),
-        new Post(routeName: 'api_pokemon_import')
-    ],
-    order: ['name' => 'ASC'],
-    paginationEnabled: true,
-    paginationItemsPerPage: 20
-)]
 class Pokemon
 {
     #[ORM\Id]
     #[ORM\Column(length: 255)]
-    #[Groups(['pokemon:read'])]
     private ?string $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['pokemon:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['pokemon:read'])]
     private ?string $supertype = null;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $subtypes = [];
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['pokemon:read'])]
     private ?string $hp = null;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $types = [];
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['pokemon:read'])]
     private ?string $evolvesFrom = null;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $abilities = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $attacks = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $weaknesses = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $retreatCost = [];
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    #[Groups(['pokemon:read'])]
     private ?int $convertedRetreatCost = null;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $set = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['pokemon:read'])]
     private ?string $number = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['pokemon:read'])]
     private ?string $artist = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['pokemon:read'])]
     private ?string $rarity = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['pokemon:read'])]
     private ?string $flavorText = null;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $nationalPokedexNumbers = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $legalities = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $images = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $tcgplayer = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['pokemon:read'])]
     private array $cardmarket = [];
 
     // Getters and Setters

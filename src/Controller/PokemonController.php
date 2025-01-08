@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\PokemonTcgService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,12 +14,15 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/pokemon')]
 class PokemonController extends AbstractController
 {
-    private const API_URL = 'https://api.pokemontcg.io/v2';
-    private string $apiKey;
+    private PokemonTcgService $pokemonTcgService;
+    private PokemonRepository $pokemonRepository;
 
-    public function __construct(string $pokemonTcgApiKey)
-    {
-        $this->apiKey = $pokemonTcgApiKey;
+    public function __construct(
+        PokemonTcgService $pokemonTcgService,
+        PokemonRepository $pokemonRepository
+    ) {
+        $this->pokemonTcgService = $pokemonTcgService;
+        $this->pokemonRepository = $pokemonRepository;
     }
 
     #[Route('/import', name: 'api_pokemon_import', methods: ['POST'])]
@@ -105,17 +108,17 @@ class PokemonController extends AbstractController
     }
 
     #[Route('', name: 'api_pokemon_list', methods: ['GET'])]
-    public function listCards(PokemonRepository $pokemonRepository): JsonResponse
+    public function listCards(): JsonResponse
     {
-        $pokemons = $pokemonRepository->findAll();
+        $pokemons = $this->pokemonRepository->findAll();
         $data = array_map(fn($pokemon) => $pokemon->toArray(), $pokemons);
         return $this->json($data);
     }
 
     #[Route('/{id}', name: 'api_pokemon_show', methods: ['GET'])]
-    public function showCard(string $id, PokemonRepository $pokemonRepository): JsonResponse
+    public function showCard(string $id): JsonResponse
     {
-        $pokemon = $pokemonRepository->find($id);
+        $pokemon = $this->pokemonRepository->find($id);
         
         if (!$pokemon) {
             return $this->json(['error' => 'Pokemon not found'], 404);

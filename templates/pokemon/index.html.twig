@@ -1,46 +1,143 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/pokemon.css') }}">
+{% endblock %}
+
 {% block title %}Pokémon Cards{% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="text-center mb-4">Pokémon Card Collection</h1>
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">Pokémon Card Collection</h1>
+        </div>
+        {% for pokemon in pokemons %}
+            <div class="col-md-4 mb-4">
+                <div class="card pokemon-card" data-pokemon-id="{{ pokemon.id }}" style="cursor: pointer;">
+                    {% if pokemon.images.small is defined %}
+                        <img src="{{ pokemon.images.small }}" class="card-img-top" alt="{{ pokemon.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-secondary text-white text-center py-5">
+                            No Image
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
-    {% for pokemon in pokemons %}
-    <div class="col-md-3 mb-4">
-        <div class="card pokemon-card">
-            {% if pokemon.images.small is defined %}
-                <img src="{{ pokemon.images.small }}" class="card-img-top" alt="{{ pokemon.name }}">
-            {% else %}
-                <div class="card-img-top bg-secondary text-white text-center py-5">
-                    No Image
+    <!-- Modal -->
+    <div class="modal fade" id="pokemonModal" tabindex="-1" aria-labelledby="pokemonModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pokemonModalLabel">Card Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            {% endif %}
-            
-            <div class="card-body">
-                <h5 class="card-title">{{ pokemon.name }}</h5>
-                <p class="card-text">
-                    <strong>Type:</strong> {{ pokemon.types|join(', ') }}<br>
-                    <strong>Set:</strong> {{ pokemon.set.name ?? 'Unknown' }}<br>
-                    <strong>Rarity:</strong> {{ pokemon.rarity }}
-                </p>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img id="modalCardImage" src="" alt="" class="img-fluid">
+                        </div>
+                        <div class="col-md-6">
+                            <h3 id="modalCardName"></h3>
+                            <div id="modalCardDetails">
+                                <p><strong>Types:</strong> <span id="modalCardTypes"></span></p>
+                                <p><strong>Supertype:</strong> <span id="modalCardSupertype"></span></p>
+                                <p><strong>Rarity:</strong> <span id="modalCardRarity"></span></p>
+                                <p><strong>Set:</strong> <span id="modalCardSet"></span></p>
+                                <div id="modalCardStats"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    {% endfor %}
 
-    <div class="col-12">
-        <nav aria-label="Pokemon pagination">
-            <ul class="pagination justify-content-center">
-                {% for page in range(1, totalPages) %}
-                    <li class="page-item {{ page == currentPage ? 'active' : '' }}">
-                        <a class="page-link" href="{{ path('homepage', {page: page}) }}">{{ page }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </nav>
+    <div class="row">
+        <div class="col-12 d-flex justify-content-center">
+            <nav aria-label="Pokemon pagination">
+                <ul class="pagination">
+                    {% if currentPage > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('homepage', {'page': currentPage - 1}) }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% if totalPages > currentPage %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('homepage', {'page': currentPage + 1}) }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
     </div>
-</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pokemonCards = document.querySelectorAll('.pokemon-card');
+            const modal = new bootstrap.Modal(document.getElementById('pokemonModal'));
+
+            pokemonCards.forEach(card => {
+                card.addEventListener('click', async function() {
+                    const pokemonId = this.dataset.pokemonId;
+                    try {
+                        const response = await fetch(`/api/pokemon/${pokemonId}`);
+                        const pokemon = await response.json();
+                        
+                        // Update modal content
+                        document.getElementById('modalCardName').textContent = pokemon.name;
+                        document.getElementById('modalCardImage').src = pokemon.images.large || pokemon.images.small;
+                        document.getElementById('modalCardTypes').textContent = pokemon.types ? pokemon.types.join(', ') : 'N/A';
+                        document.getElementById('modalCardSupertype').textContent = pokemon.supertype || 'N/A';
+                        document.getElementById('modalCardRarity').textContent = pokemon.rarity || 'N/A';
+                        document.getElementById('modalCardSet').textContent = pokemon.set ? pokemon.set.name : 'N/A';
+
+                        // Handle stats based on card type
+                        const statsDiv = document.getElementById('modalCardStats');
+                        statsDiv.innerHTML = '';
+                        
+                        if (pokemon.hp) {
+                            statsDiv.innerHTML += `<p><strong>HP:</strong> ${pokemon.hp}</p>`;
+                        }
+                        
+                        if (pokemon.attacks) {
+                            statsDiv.innerHTML += '<p><strong>Attacks:</strong></p>';
+                            pokemon.attacks.forEach(attack => {
+                                statsDiv.innerHTML += `
+                                    <div class="ms-3 mb-2">
+                                        <strong>${attack.name}</strong><br>
+                                        Damage: ${attack.damage || 'N/A'}<br>
+                                        Cost: ${attack.cost ? attack.cost.join(', ') : 'N/A'}<br>
+                                        ${attack.text ? `Effect: ${attack.text}` : ''}
+                                    </div>
+                                `;
+                            });
+                        }
+
+                        if (pokemon.weaknesses) {
+                            statsDiv.innerHTML += '<p><strong>Weaknesses:</strong></p>';
+                            pokemon.weaknesses.forEach(weakness => {
+                                statsDiv.innerHTML += `
+                                    <div class="ms-3">
+                                        ${weakness.type}: ${weakness.value}
+                                    </div>
+                                `;
+                            });
+                        }
+
+                        modal.show();
+                    } catch (error) {
+                        console.error('Error fetching pokemon details:', error);
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

@@ -25,6 +25,9 @@ class PokemonTcgService
 
     public function importCards(): void
     {
+        // Supprimer toutes les cartes existantes
+        $this->pokemonRepository->removeAll();
+
         $response = $this->httpClient->request('GET', self::API_URL . '/cards', [
             'headers' => [
                 'X-Api-Key' => $this->apiKey
@@ -35,9 +38,9 @@ class PokemonTcgService
 
         foreach ($data['data'] as $cardData) {
             $pokemon = new Pokemon();
-            $pokemon->setId($cardData['id']);
-            $pokemon->setName($cardData['name']);
-            $pokemon->setSupertype($cardData['supertype']);
+            $pokemon->setId($cardData['id'] ?? null);
+            $pokemon->setName($cardData['name'] ?? '');
+            $pokemon->setSupertype($cardData['supertype'] ?? '');
             $pokemon->setSubtypes($cardData['subtypes'] ?? []);
             $pokemon->setHp($cardData['hp'] ?? null);
             $pokemon->setTypes($cardData['types'] ?? []);
@@ -48,9 +51,9 @@ class PokemonTcgService
             $pokemon->setRetreatCost($cardData['retreatCost'] ?? []);
             $pokemon->setConvertedRetreatCost($cardData['convertedRetreatCost'] ?? null);
             $pokemon->setSet($cardData['set'] ?? []);
-            $pokemon->setNumber($cardData['number']);
-            $pokemon->setArtist($cardData['artist']);
-            $pokemon->setRarity($cardData['rarity']);
+            $pokemon->setNumber($cardData['number'] ?? '');
+            $pokemon->setArtist($cardData['artist'] ?? '');
+            $pokemon->setRarity($cardData['rarity'] ?? '');
             $pokemon->setFlavorText($cardData['flavorText'] ?? null);
             $pokemon->setNationalPokedexNumbers($cardData['nationalPokedexNumbers'] ?? []);
             $pokemon->setLegalities($cardData['legalities'] ?? []);
@@ -61,6 +64,6 @@ class PokemonTcgService
             $this->pokemonRepository->save($pokemon, false);
         }
 
-        $this->pokemonRepository->flush();
+        $this->pokemonRepository->getEntityManager()->flush();
     }
 }
