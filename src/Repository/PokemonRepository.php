@@ -15,17 +15,28 @@ class PokemonRepository extends ServiceEntityRepository
 
     public function save(Pokemon $pokemon, bool $flush = true): void
     {
-        $this->_em->persist($pokemon);
+        $em = $this->getEntityManager();
+        $em->persist($pokemon);
         if ($flush) {
-            $this->_em->flush();
+            $em->flush();
         }
     }
 
     public function remove(Pokemon $pokemon, bool $flush = true): void
     {
-        $this->_em->remove($pokemon);
+        $em = $this->getEntityManager();
+        $em->remove($pokemon);
         if ($flush) {
-            $this->_em->flush();
+            $em->flush();
+        }
+    }
+
+    public function removeAll(bool $flush = true): void
+    {
+        $em = $this->getEntityManager();
+        $em->createQuery('DELETE FROM App\Entity\Pokemon p')->execute();
+        if ($flush) {
+            $em->flush();
         }
     }
 }

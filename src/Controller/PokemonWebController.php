@@ -14,12 +14,17 @@ class PokemonWebController extends AbstractController
     public function index(PokemonRepository $pokemonRepository, Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
+        $itemsPerPage = 12; // Nombre de cartes par page
 
-        $pokemons = $pokemonRepository->findBy([], ['name' => 'ASC'], $limit, $offset);
-        $totalPokemons = $pokemonRepository->count([]);
-        $totalPages = ceil($totalPokemons / $limit);
+        $totalCards = $pokemonRepository->count([]);
+        $totalPages = ceil($totalCards / $itemsPerPage);
+
+        $pokemons = $pokemonRepository->findBy(
+            [], 
+            ['name' => 'ASC'], 
+            $itemsPerPage, 
+            ($page - 1) * $itemsPerPage
+        );
 
         return $this->render('pokemon/index.html.twig', [
             'pokemons' => $pokemons,
