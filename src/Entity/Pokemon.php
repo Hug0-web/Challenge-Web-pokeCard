@@ -2,25 +2,21 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use App\Repository\PokemonRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;  
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['pokemon:read']]),
-        new GetCollection(normalizationContext: ['groups' => ['pokemon:read']]),
-        new Post(routeName: 'api_pokemon_import')
+        new GetCollection(normalizationContext: ['groups' => ['pokemon:read']])
     ],
     order: ['name' => 'ASC'],
     paginationEnabled: true,
-    paginationItemsPerPage: 20
+    paginationItemsPerPage: 250
 )]
 class Pokemon
 {
@@ -113,13 +109,13 @@ class Pokemon
     #[Groups(['pokemon:read'])]
     private array $cardmarket = [];
 
-    // Getters and Setters
+    
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(string $id): self
+    public function setId(string $id): static
     {
         $this->id = $id;
         return $this;
