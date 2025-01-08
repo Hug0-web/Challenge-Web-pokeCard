@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Pokémon Card Collection{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f4f4; }
+        .pokemon-card { 
+            transition: transform 0.3s ease; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .pokemon-card:hover { 
+            transform: scale(1.05);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
+
+    {% block javascripts %}
+    {% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('homepage') }}">Pokémon Card Collection</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block body %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

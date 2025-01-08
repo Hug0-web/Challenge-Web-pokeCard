@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ pokemon.name }} - Details{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            {% if pokemon.images.large is defined %}
+                <img src="{{ pokemon.images.large }}" class="card-img-top" alt="{{ pokemon.name }}">
+            {% else %}
+                <div class="card-img-top bg-secondary text-white text-center py-5">
+                    No Image
+                </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">{{ pokemon.name }}</h1>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Card Details</h4>
+                        <p>
+                            <strong>Number:</strong> {{ pokemon.number }}<br>
+                            <strong>Set:</strong> {{ pokemon.set.name ?? 'Unknown' }}<br>
+                            <strong>Rarity:</strong> {{ pokemon.rarity }}<br>
+                            <strong>Artist:</strong> {{ pokemon.artist }}
+                        </p>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h4>Pokémon Details</h4>
+                        <p>
+                            <strong>Type:</strong> {{ pokemon.types|join(', ') }}<br>
+                            <strong>HP:</strong> {{ pokemon.hp }}<br>
+                            {% if pokemon.evolvesFrom %}
+                                <strong>Evolves From:</strong> {{ pokemon.evolvesFrom }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if pokemon.abilities|length > 0 %}
+                <div class="mt-3">
+                    <h4>Abilities</h4>
+                    <ul>
+                        {% for ability in pokemon.abilities %}
+                            <li>
+                                <strong>{{ ability.name }}</strong>: 
+                                {{ ability.text }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if pokemon.attacks|length > 0 %}
+                <div class="mt-3">
+                    <h4>Attacks</h4>
+                    <ul>
+                        {% for attack in pokemon.attacks %}
+                            <li>
+                                <strong>{{ attack.name }}</strong>
+                                {% if attack.damage %}({{ attack.damage }} damage){% endif %}
+                                <p>{{ attack.text }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('homepage') }}" class="btn btn-secondary">Back to Collection</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
