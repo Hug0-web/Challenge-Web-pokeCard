@@ -38,7 +38,9 @@
 {% block body %}
     <div class="row">
         <div class="col-12">
-            <h1 class="text-center mb-4">Pokémon Card Collection</h1>
+            <div class="text-center mb-4">
+                <h1>Pokémon Card Collection</h1>
+            </div>
         </div>
         {% for pokemon in pokemons %}
             <div class="col-md-4 mb-4">
@@ -54,6 +56,26 @@
             </div>
         {% endfor %}
     </div>
+
+    {% if totalPages > 1 %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': currentPage - 1})) }}" {{ currentPage == 1 ? 'tabindex="-1" aria-disabled="true"' : '' }}>Previous</a>
+                </li>
+                
+                {% for i in 1..totalPages %}
+                    <li class="page-item {{ currentPage == i ? 'active' : '' }}">
+                        <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i})) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                
+                <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': currentPage + 1})) }}" {{ currentPage == totalPages ? 'tabindex="-1" aria-disabled="true"' : '' }}>Next</a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
 
     <!-- Modal -->
     <div class="modal fade" id="pokemonModal" tabindex="-1" aria-labelledby="pokemonModalLabel" aria-hidden="true">

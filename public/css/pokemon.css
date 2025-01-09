@@ -10,9 +10,231 @@ body {
 }
 
 .container {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: transparent;/* Navbar Styles */
+    .navbar {
+        background: linear-gradient(to right, #FF0000, #990000) !important; /* Dégradé rouge style Pokéball */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-bottom: 3px solid #FFD700; /* Bordure dorée */
+    }
+    
+    .navbar-brand {
+        color: #FFD700 !important; /* Jaune or de Pokémon */
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        font-family: 'Arial Black', sans-serif;
+        letter-spacing: 1px;
+    }
+    
+    .navbar-brand:hover {
+        color: #FFFFFF !important;
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link {
+        color: #FFFFFF !important;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        background-color: #FFD700;
+        transition: all 0.3s ease;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link:hover {
+        color: #FFD700 !important;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link:hover::after {
+        width: 100%;
+        left: 0;
+    }
+    
+    .navbar-toggler {
+        border-color: #FFD700 !important;
+    }
+    
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }/* Navbar Styling */
+    .navbar {
+        background: linear-gradient(to right, #FF0000, #990000) !important; /* Dégradé rouge Pokémon */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .navbar:hover {
+        box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+    }
+    
+    .navbar-brand {
+        color: #FFCB05 !important; /* Jaune Pokémon */
+        font-weight: bold;
+        font-size: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .navbar-brand:hover {
+        transform: scale(1.05);
+        color: #ffffff !important;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link {
+        color: #ffffff !important;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background-color: #FFCB05;
+        transition: all 0.3s ease;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link:hover::after {
+        width: 100%;
+        left: 0;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link:hover {
+        color: #FFCB05 !important;
+        transform: scale(1.1);
+    }
+    
+    /* Pokéball-inspired hover effect */
+    .navbar-toggler {
+        border: 2px solid #ffffff;
+        transition: all 0.3s ease;
+    }
+    
+    .navbar-toggler:hover {
+        background-color: rgba(255,255,255,0.2);
+        transform: rotate(360deg);
+   /* Général */
+body {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.container {
+    background-color: transparent;
     border-radius: 10px;
     padding: 20px;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: linear-gradient(to right, #FF0000, #990000) !important; /* Dégradé rouge Pokéball */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    border-bottom: 3px solid #FFCB05;
+    transition: all 0.3s ease;
+}
+
+.navbar:hover {
+    box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+}
+
+.navbar-brand {
+    color: #FFCB05 !important; /* Jaune Pokémon */
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+    font-family: 'Arial Black', sans-serif;
+    letter-spacing: 1px;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+    color: #ffffff !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+    position: relative;
+    font-weight: 600;
+}
+
+.navbar-dark .navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #FFCB05;
+    transition: all 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #FFCB05 !important;
+    transform: scale(1.1);
+}
+
+.navbar-toggler {
+    border: 2px solid #ffffff;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    background-color: rgba(255,255,255,0.2);
+    transform: rotate(360deg);
+}
+
+/* Cartes Pokémon */
+.pokemon-card {
+    background-color: #212529;
+    border: 1px solid #495057;
+    transition: transform 0.3s ease;
+}
+
+.pokemon-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(255,255,255,0.1);
+}
+
+/* Pagination */
+.page-link {
+    color: #f8f9fa;
+    background-color: #000;
+    border: 1px solid #495057;
+}
+
+.page-link:hover {
+    color: #adb5bd;
+    background-color: #212529;
+}
+
+.page-item.active .page-link {
+    color: #000;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+
+.card-img-top.bg-secondary {
+    background-color: #495057 !important;
+}
+    }
 }
 
 .pokemon-card {
@@ -103,4 +325,25 @@ body {
     background-color: rgba(255, 255, 255, 1);
     color: #2d3748;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu-dark {
+    background-color: #212529;
+    border-color: #495057;
+}
+
+.dropdown-menu-dark .dropdown-item {
+    color: #f8f9fa;
+}
+
+.dropdown-menu-dark .dropdown-item:hover {
+    background-color: #343a40;
+}
+
+.dropdown-menu-dark .dropdown-item.active {
+    background-color: #495057;
+}
+
+.btn-dark.dropdown-toggle:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.1);
 }
