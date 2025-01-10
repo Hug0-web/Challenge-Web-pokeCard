@@ -5,15 +5,20 @@ namespace App\Controller;
 use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
 use App\Service\PokemonTcgService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/pokemon')]
 class PokemonController extends AbstractController
 {
+    private const API_URL = 'https://api.pokemontcg.io/v2';
     private PokemonTcgService $pokemonTcgService;
     private PokemonRepository $pokemonRepository;
+    private string $apiKey;
 
     public function __construct(
         PokemonTcgService $pokemonTcgService,
@@ -21,6 +26,7 @@ class PokemonController extends AbstractController
     ) {
         $this->pokemonTcgService = $pokemonTcgService;
         $this->pokemonRepository = $pokemonRepository;
+        $this->apiKey = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
     }
 
     #[Route('/import', name: 'api_pokemon_import', methods: ['POST'])]
@@ -32,6 +38,8 @@ class PokemonController extends AbstractController
         $httpClient = HttpClient::create();
 
         try {
+            // Supprimer les cartes existantes
+            $entityManager->createQuery('DELETE FROM App\Entity\Pokemon')->execute();
             
             $existingCards = $pokemonRepository->findAll();
             foreach ($existingCards as $card) {
@@ -40,7 +48,7 @@ class PokemonController extends AbstractController
             $entityManager->flush();
 
             $page = 1;
-            $pageSize = 250; 
+            $pageSize = 50; 
             $totalImported = 0;
 
             do {
@@ -85,13 +93,13 @@ class PokemonController extends AbstractController
                 }
 
                 $entityManager->flush();
-                $totalImported += count($data['data']);
+                $entityManager->clear(); // Clear the entity manager to free memory
 
-                $this->addFlash('info', "Imported page $page: " . count($data['data']) . " cards");
+                $totalImported += count($data['data']);
 
                 $page++;
 
-                sleep(1);
+                usleep(500000); // 0.5 second delay to avoid rate limiting
 
             } while (count($data['data']) == $pageSize);
 
