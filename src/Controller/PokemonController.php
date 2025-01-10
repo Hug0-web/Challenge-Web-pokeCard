@@ -26,7 +26,6 @@ class PokemonController extends AbstractController
     ) {
         $this->pokemonTcgService = $pokemonTcgService;
         $this->pokemonRepository = $pokemonRepository;
-        $this->apiKey = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
     }
 
     #[Route('/import', name: 'api_pokemon_import', methods: ['POST'])]
@@ -38,7 +37,6 @@ class PokemonController extends AbstractController
         $httpClient = HttpClient::create();
 
         try {
-            // Supprimer les cartes existantes
             $entityManager->createQuery('DELETE FROM App\Entity\Pokemon')->execute();
             
             $existingCards = $pokemonRepository->findAll();
