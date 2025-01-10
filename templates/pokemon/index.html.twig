@@ -57,27 +57,6 @@
         {% endfor %}
     </div>
 
-    {% if totalPages > 1 %}
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
-                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': currentPage - 1})) }}" {{ currentPage == 1 ? 'tabindex="-1" aria-disabled="true"' : '' }}>Previous</a>
-                </li>
-                
-                {% for i in 1..totalPages %}
-                    <li class="page-item {{ currentPage == i ? 'active' : '' }}">
-                        <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i})) }}">{{ i }}</a>
-                    </li>
-                {% endfor %}
-                
-                <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
-                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': currentPage + 1})) }}" {{ currentPage == totalPages ? 'tabindex="-1" aria-disabled="true"' : '' }}>Next</a>
-                </li>
-            </ul>
-        </nav>
-    {% endif %}
-
-    <!-- Modal -->
     <div class="modal fade" id="pokemonModal" tabindex="-1" aria-labelledby="pokemonModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -161,7 +140,6 @@
                         const response = await fetch(`/api/pokemon/${pokemonId}`);
                         const pokemon = await response.json();
                         
-                        // Update modal content
                         document.getElementById('modalCardName').textContent = pokemon.name;
                         document.getElementById('modalCardImage').src = pokemon.images.large || pokemon.images.small;
                         document.getElementById('modalCardTypes').textContent = pokemon.types ? pokemon.types.join(', ') : 'N/A';
@@ -169,7 +147,6 @@
                         document.getElementById('modalCardRarity').textContent = pokemon.rarity || 'N/A';
                         document.getElementById('modalCardSet').textContent = pokemon.set ? pokemon.set.name : 'N/A';
 
-                        // Handle stats based on card type
                         const statsDiv = document.getElementById('modalCardStats');
                         statsDiv.innerHTML = '';
                         
