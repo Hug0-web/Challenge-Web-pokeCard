@@ -32,7 +32,7 @@ class PokemonController extends AbstractController
         $httpClient = HttpClient::create();
 
         try {
-            // Supprimer les cartes existantes
+            
             $existingCards = $pokemonRepository->findAll();
             foreach ($existingCards as $card) {
                 $entityManager->remove($card);

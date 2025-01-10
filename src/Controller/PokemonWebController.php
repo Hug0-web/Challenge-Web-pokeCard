@@ -14,7 +14,7 @@ class PokemonWebController extends AbstractController
     public function index(PokemonRepository $pokemonRepository, Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
-        $itemsPerPage = 12; // Nombre de cartes par page
+        $itemsPerPage = 12;
 
         $totalCards = $pokemonRepository->count([]);
         $totalPages = ceil($totalCards / $itemsPerPage);

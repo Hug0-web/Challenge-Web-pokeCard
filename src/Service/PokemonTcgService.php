@@ -25,7 +25,6 @@ class PokemonTcgService
 
     public function importCards(): void
     {
-        // Supprimer toutes les cartes existantes
         $this->pokemonRepository->removeAll();
 
         $response = $this->httpClient->request('GET', self::API_URL . '/cards', [
