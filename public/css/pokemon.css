@@ -10,15 +10,15 @@ body {
 }
 
 .container {
-    background-color: transparent;/* Navbar Styles */
+    background-color: transparent;
     .navbar {
-        background: linear-gradient(to right, #FF0000, #990000) !important; /* Dégradé rouge style Pokéball */
+        background: linear-gradient(to right, #FF0000, #990000) !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        border-bottom: 3px solid #FFD700; /* Bordure dorée */
+        border-bottom: 3px solid #FFD700;
     }
     
     .navbar-brand {
-        color: #FFD700 !important; /* Jaune or de Pokémon */
+        color: #FFD700 !important;
         font-weight: bold;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         font-family: 'Arial Black', sans-serif;
@@ -66,7 +66,7 @@ body {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
     }/* Navbar Styling */
     .navbar {
-        background: linear-gradient(to right, #FF0000, #990000) !important; /* Dégradé rouge Pokémon */
+        background: linear-gradient(to right, #FF0000, #990000) !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         transition: all 0.3s ease;
     }
@@ -76,7 +76,7 @@ body {
     }
     
     .navbar-brand {
-        color: #FFCB05 !important; /* Jaune Pokémon */
+        color: #FFCB05 !important;
         font-weight: bold;
         font-size: 1.5rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
@@ -115,7 +115,6 @@ body {
         transform: scale(1.1);
     }
     
-    /* Pokéball-inspired hover effect */
     .navbar-toggler {
         border: 2px solid #ffffff;
         transition: all 0.3s ease;
@@ -124,7 +123,7 @@ body {
     .navbar-toggler:hover {
         background-color: rgba(255,255,255,0.2);
         transform: rotate(360deg);
-   /* Général */
+
 body {
     background-color: #1a1a1a;
     color: #ffffff;
@@ -136,9 +135,9 @@ body {
     padding: 20px;
 }
 
-/* Navbar Styles */
+
 .navbar {
-    background: linear-gradient(to right, #FF0000, #990000) !important; /* Dégradé rouge Pokéball */
+    background: linear-gradient(to right, #FF0000, #990000) !important; 
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     border-bottom: 3px solid #FFCB05;
     transition: all 0.3s ease;
@@ -149,7 +148,7 @@ body {
 }
 
 .navbar-brand {
-    color: #FFCB05 !important; /* Jaune Pokémon */
+    color: #FFCB05 !important;
     font-weight: bold;
     font-size: 1.5rem;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
@@ -201,7 +200,7 @@ body {
     transform: rotate(360deg);
 }
 
-/* Cartes Pokémon */
+
 .pokemon-card {
     background-color: #212529;
     border: 1px solid #495057;
@@ -213,7 +212,7 @@ body {
     box-shadow: 0 4px 6px rgba(255,255,255,0.1);
 }
 
-/* Pagination */
+
 .page-link {
     color: #f8f9fa;
     background-color: #000;
@@ -258,7 +257,7 @@ body {
     border-radius: 15px;
 }
 
-/* Modal styles */
+
 .modal-content {
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
@@ -308,7 +307,7 @@ body {
     border-radius: 8px;
 }
 
-/* Pagination styles */
+
 .pagination {
     margin-top: 2rem;
 }
