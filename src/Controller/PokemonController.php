@@ -91,13 +91,13 @@ class PokemonController extends AbstractController
                 }
 
                 $entityManager->flush();
-                $entityManager->clear(); // Clear the entity manager to free memory
+                $entityManager->clear(); 
 
                 $totalImported += count($data['data']);
 
                 $page++;
 
-                usleep(500000); // 0.5 second delay to avoid rate limiting
+                usleep(500000);
 
             } while (count($data['data']) == $pageSize);
 
