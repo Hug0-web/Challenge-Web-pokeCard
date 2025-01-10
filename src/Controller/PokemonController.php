@@ -9,64 +9,56 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/api/pokemon')]
 class PokemonController extends AbstractController
 {
     private const API_URL = 'https://api.pokemontcg.io/v2';
-    private PokemonTcgService $pokemonTcgService;
-    private PokemonRepository $pokemonRepository;
-    private string $apiKey;
-
-    public function __construct(
-        PokemonTcgService $pokemonTcgService,
-        PokemonRepository $pokemonRepository
-    ) {
-        $this->pokemonTcgService = $pokemonTcgService;
-        $this->pokemonRepository = $pokemonRepository;
-    }
 
     #[Route('/import', name: 'api_pokemon_import', methods: ['POST'])]
     public function importCards(
         EntityManagerInterface $entityManager,
         PokemonRepository $pokemonRepository,
+        HttpClientInterface $httpClient,
         Request $request
     ): JsonResponse {
-        $httpClient = HttpClient::create();
-
         try {
-            $entityManager->createQuery('DELETE FROM App\Entity\Pokemon')->execute();
             
-            $existingCards = $pokemonRepository->findAll();
-            foreach ($existingCards as $card) {
-                $entityManager->remove($card);
-            }
-            $entityManager->flush();
+            $pokemonRepository->removeAll();
 
             $page = 1;
-            $pageSize = 50; 
+            $pageSize = 250; 
             $totalImported = 0;
+            $importedIds = [];
 
             do {
                 $response = $httpClient->request('GET', self::API_URL . '/cards', [
                     'query' => [
                         'page' => $page,
                         'pageSize' => $pageSize
-                    ],
-                    'headers' => [
-                        'X-Api-Key' => $this->apiKey
                     ]
                 ]);
 
                 $data = $response->toArray();
 
                 foreach ($data['data'] as $cardData) {
+                
+                    if ($totalImported >= 250) {
+                        break 2;
+                    }
+
+                
+                    if (!isset($cardData['id']) || empty($cardData['id'])) {
+                        $this->addFlash('warning', "Skipping card without ID: " . json_encode($cardData));
+                        continue;
+                    }
+
                     $pokemon = new Pokemon();
                     $pokemon->setId($cardData['id']);
-                    $pokemon->setName($cardData['name']);
-                    $pokemon->setSupertype($cardData['supertype']);
+                    $pokemon->setName($cardData['name'] ?? 'Unknown');
+                    $pokemon->setSupertype($cardData['supertype'] ?? 'Unknown');
                     $pokemon->setSubtypes($cardData['subtypes'] ?? []);
                     $pokemon->setHp($cardData['hp'] ?? null);
                     $pokemon->setTypes($cardData['types'] ?? []);
@@ -87,47 +79,67 @@ class PokemonController extends AbstractController
                     $pokemon->setTcgplayer($cardData['tcgplayer'] ?? []);
                     $pokemon->setCardmarket($cardData['cardmarket'] ?? []);
 
-                    $entityManager->persist($pokemon);
+                    try {
+                        $pokemonRepository->save($pokemon);
+                        $importedIds[] = $pokemon->getId();
+                        $totalImported++;
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', "Failed to import card {$pokemon->getId()}: " . $e->getMessage());
+                    }
                 }
 
-                $entityManager->flush();
-                $entityManager->clear(); // Clear the entity manager to free memory
-
-                $totalImported += count($data['data']);
+                $this->addFlash('info', "Imported page $page: " . count($data['data']) . " cards");
 
                 $page++;
 
-                usleep(500000); // 0.5 second delay to avoid rate limiting
+                sleep(1);
 
             } while (count($data['data']) == $pageSize);
 
             return $this->json([
                 'message' => 'Cards imported successfully', 
                 'count' => $totalImported,
-                'pages' => $page - 1
+                'pages' => $page - 1,
+                'importedIds' => $importedIds
             ]);
         } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], 500);
+            return $this->json([
+                'error' => 'Import failed', 
+                'details' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
         }
     }
 
     #[Route('', name: 'api_pokemon_list', methods: ['GET'])]
-    public function listCards(): JsonResponse
+    public function listCards(PokemonRepository $pokemonRepository): JsonResponse
     {
-        $pokemons = $this->pokemonRepository->findAll();
-        $data = array_map(fn($pokemon) => $pokemon->toArray(), $pokemons);
-        return $this->json($data);
+        $pokemons = $pokemonRepository->findAll();
+        
+        return $this->json($pokemons, 200, [], [
+            'groups' => ['pokemon:read']
+        ]);
     }
 
-    #[Route('/{id}', name: 'api_pokemon_show', methods: ['GET'])]
-    public function showCard(string $id): JsonResponse
+    #[Route('/card/{id}', name: 'api_pokemon_detail', methods: ['GET'])]
+    public function detail(string $id, PokemonRepository $pokemonRepository): JsonResponse
     {
-        $pokemon = $this->pokemonRepository->find($id);
+        $pokemon = $pokemonRepository->find($id);
         
         if (!$pokemon) {
-            return $this->json(['error' => 'Pokemon not found'], 404);
+    
+            $allPokemonIds = $pokemonRepository->findAll();
+            $existingIds = array_map(fn($p) => $p->getId(), $allPokemonIds);
+            
+            return $this->json([
+                'error' => 'Pokemon not found', 
+                'requestedId' => $id,
+                'existingIds' => $existingIds
+            ], 404);
         }
 
-        return $this->json($pokemon->toArray());
+        return $this->json($pokemon, 200, [], [
+            'groups' => ['pokemon:read']
+        ]);
     }
 }

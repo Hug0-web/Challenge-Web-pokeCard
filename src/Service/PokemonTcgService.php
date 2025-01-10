@@ -9,29 +9,22 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class PokemonTcgService
 {
     private const API_URL = 'https://api.pokemontcg.io/v2';
-    private string $apiKey;
     private HttpClientInterface $httpClient;
     private PokemonRepository $pokemonRepository;
 
     public function __construct(
         HttpClientInterface $httpClient,
-        PokemonRepository $pokemonRepository,
-        string $apiKey
+        PokemonRepository $pokemonRepository
     ) {
         $this->httpClient = $httpClient;
         $this->pokemonRepository = $pokemonRepository;
-        $this->apiKey = $apiKey;
     }
 
     public function importCards(): void
     {
         $this->pokemonRepository->removeAll();
 
-        $response = $this->httpClient->request('GET', self::API_URL . '/cards', [
-            'headers' => [
-                'X-Api-Key' => $this->apiKey
-            ]
-        ]);
+        $response = $this->httpClient->request('GET', self::API_URL . '/cards');
 
         $data = $response->toArray();
 

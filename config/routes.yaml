@@ -3,3 +3,13 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+api_pokemon_import:
+    path: /api/pokemon/import
+    controller: App\Controller\PokemonController::importCards
+    methods: [POST]
+
+api_platform:
+    resource: .
+    type: api_platform
+    prefix: /api

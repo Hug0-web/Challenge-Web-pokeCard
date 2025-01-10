@@ -1,0 +1,25 @@
+# config/packages/api_platform.yaml
+api_platform:
+    title: 'Pokemon Card API'
+    description: 'API for Pokemon Card Management'
+    version: '1.0.0'
+    
+    # Swagger configuration
+    swagger:
+        versions: [3]
+        api_keys:
+            apiKey:
+                name: Authorization
+                type: header
+
+    # Customize the API
+    defaults:
+        pagination:
+            enabled: true
+            items_per_page: 30
+    
+    # Enable documentation and entrypoint
+    enable_docs: true
+    enable_swagger_ui: true
+    enable_swagger: true
+    enable_entrypoint: true

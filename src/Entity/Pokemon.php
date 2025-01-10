@@ -6,13 +6,42 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;  
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
+use App\Repository\PokemonRepository;
+use App\Provider\PokemonProvider;
+use App\State\PokemonImportProcessor;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['pokemon:read']]),
-        new GetCollection(normalizationContext: ['groups' => ['pokemon:read']])
+        new Get(
+            uriTemplate: '/pokemon/{id}',
+            requirements: ['id' => '.+'],
+            provider: PokemonProvider::class,
+            normalizationContext: ['groups' => ['pokemon:read']]
+        ),
+        new GetCollection(
+            uriTemplate: '/pokemon',
+            provider: PokemonProvider::class,
+            normalizationContext: ['groups' => ['pokemon:read']]
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['pokemon:write']]
+        ),
+        new Post(
+            name: 'import',
+            uriTemplate: '/pokemon/import',
+            status: 204,
+            processor: PokemonImportProcessor::class
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['pokemon:write']]
+        ),
+        new Delete()
     ],
     order: ['name' => 'ASC'],
     paginationEnabled: true,
@@ -22,69 +51,92 @@ class Pokemon
 {
     #[ORM\Id]
     #[ORM\Column(length: 255)]
+    #[ORM\GeneratedValue(strategy: "NONE")]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $supertype = null;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $subtypes = [];
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $hp = null;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $types = [];
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $evolvesFrom = null;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $abilities = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $attacks = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $weaknesses = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $retreatCost = [];
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?int $convertedRetreatCost = null;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $set = [];
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $number = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $artist = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $rarity = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private ?string $flavorText = null;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $nationalPokedexNumbers = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $legalities = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $images = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $tcgplayer = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['pokemon:read', 'pokemon:write'])]
     private array $cardmarket = [];
 
     
