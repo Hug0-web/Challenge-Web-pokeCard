@@ -2,16 +2,40 @@
 
 {% block title %}My Deck{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .pokemon-card {
+            background-color: #212529;
+            border: 1px solid #495057;
+            transition: transform 0.3s ease;
+        }
+        .pokemon-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px rgba(255,255,255,0.1);
+        }
+        .card-img-top.bg-secondary {
+            background-color: #495057 !important;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container mt-4">
-    <h1 class="mb-4">Mon Deck Pokémon</h1>
+    <h1 class="text-center mb-4">Mon Deck Pokémon</h1>
     
     <div class="row" id="deck-pokemons">
         {% for pokemon in deck.pokemons %}
             <div class="col-md-3 mb-3 pokemon-card" data-pokemon-id="{{ pokemon.id }}">
-                <div class="card">
-                    <img src="{{ pokemon.imageUrl ?? 'path/to/default/image.png' }}" class="card-img-top" alt="{{ pokemon.name }}">
-                    <div class="card-body">
+                <div class="card pokemon-card" style="cursor: pointer;">
+                    {% if pokemon.images.small is defined %}
+                        <img src="{{ pokemon.images.small }}" class="card-img-top" alt="{{ pokemon.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-secondary text-white text-center py-5">
+                            {{ pokemon.name }}
+                        </div>
+                    {% endif %}
+                    <div class="card-body text-white">
                         <h5 class="card-title">{{ pokemon.name }}</h5>
                         <button class="btn btn-danger remove-from-deck" data-pokemon-id="{{ pokemon.id }}">Retirer</button>
                     </div>
