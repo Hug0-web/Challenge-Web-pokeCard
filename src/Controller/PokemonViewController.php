@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-class FrontendController extends AbstractController
+class PokemonViewController extends AbstractController
 {
     private const ITEMS_PER_PAGE = 12;
 
