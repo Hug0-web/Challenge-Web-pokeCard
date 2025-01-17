@@ -36,6 +36,6 @@ services:
 
     App\State\PokemonProvider:
 
-    App\State\PokemonImportProcessor:
+    App\State\PokemonImport:
         arguments:
             $httpClient: '@http_client'

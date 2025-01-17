@@ -13,7 +13,7 @@ use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\PokemonRepository;
 use App\Provider\PokemonProvider;
-use App\State\PokemonImportProcessor;
+use App\State\PokemonImport;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
 #[ApiResource(
@@ -36,7 +36,7 @@ use App\State\PokemonImportProcessor;
             name: 'import',
             uriTemplate: '/pokemon/import',
             status: 204,
-            processor: PokemonImportProcessor::class
+            processor: PokemonImport::class
         ),
         new Put(
             denormalizationContext: ['groups' => ['pokemon:write']]

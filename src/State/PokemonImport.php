@@ -9,7 +9,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
 
-class PokemonImportProcessor implements ProcessorInterface
+class PokemonImport implements ProcessorInterface
 {
     private const API_URL = 'https://api.pokemontcg.io/v2';
     private const MAX_CARDS = 250;
