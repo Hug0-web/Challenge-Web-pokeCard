@@ -39,3 +39,7 @@ services:
     App\State\PokemonImport:
         arguments:
             $httpClient: '@http_client'
+
+    App\Repository\:
+        resource: '../src/Repository'
+        tags: ['doctrine.repository']
