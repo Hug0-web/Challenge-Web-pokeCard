@@ -24,98 +24,85 @@ class PokemonController extends AbstractController
         HttpClientInterface $httpClient,
         Request $request
     ): JsonResponse {
-        try {
-            
-            $pokemonRepository->removeAll();
+        $pokemonRepository->removeAll();
 
-            $page = 1;
-            $pageSize = 250; 
-            $totalImported = 0;
-            $importedIds = [];
+        $page = 1;
+        $pageSize = 250; 
+        $totalImported = 0;
+        $importedIds = [];
 
-            do {
-                $response = $httpClient->request('GET', self::API_URL . '/cards', [
-                    'query' => [
-                        'page' => $page,
-                        'pageSize' => $pageSize
-                    ]
-                ]);
+        do {
+            $response = $httpClient->request('GET', self::API_URL . '/cards', [
+                'query' => [
+                    'page' => $page,
+                    'pageSize' => $pageSize
+                ]
+            ]);
 
-                $data = $response->toArray();
+            $data = $response->toArray();
 
-                foreach ($data['data'] as $cardData) {
-                
-                    if ($totalImported >= 250) {
-                        break 2;
-                    }
-
-                
-                    if (!isset($cardData['id']) || empty($cardData['id'])) {
-                        $this->addFlash('warning', "Skipping card without ID: " . json_encode($cardData));
-                        continue;
-                    }
-
-                    $pokemon = new Pokemon();
-                    $pokemon->setId($cardData['id']);
-                    $pokemon->setName($cardData['name'] ?? 'Unknown');
-                    $pokemon->setSupertype($cardData['supertype'] ?? 'Unknown');
-                    $pokemon->setSubtypes($cardData['subtypes'] ?? []);
-                    $pokemon->setHp($cardData['hp'] ?? null);
-                    $pokemon->setTypes($cardData['types'] ?? []);
-                    $pokemon->setEvolvesFrom($cardData['evolvesFrom'] ?? null);
-                    $pokemon->setAbilities($cardData['abilities'] ?? []);
-                    $pokemon->setAttacks($cardData['attacks'] ?? []);
-                    $pokemon->setWeaknesses($cardData['weaknesses'] ?? []);
-                    $pokemon->setRetreatCost($cardData['retreatCost'] ?? []);
-                    $pokemon->setConvertedRetreatCost($cardData['convertedRetreatCost'] ?? null);
-                    $pokemon->setSet($cardData['set'] ?? []);
-                    $pokemon->setNumber($cardData['number'] ?? '');
-                    $pokemon->setArtist($cardData['artist'] ?? '');
-                    $pokemon->setRarity($cardData['rarity'] ?? '');
-                    $pokemon->setFlavorText($cardData['flavorText'] ?? null);
-                    $pokemon->setNationalPokedexNumbers($cardData['nationalPokedexNumbers'] ?? []);
-                    $pokemon->setLegalities($cardData['legalities'] ?? []);
-                    $pokemon->setImages($cardData['images'] ?? []);
-                    $pokemon->setTcgplayer($cardData['tcgplayer'] ?? []);
-                    $pokemon->setCardmarket($cardData['cardmarket'] ?? []);
-
-                    try {
-                        $pokemonRepository->save($pokemon);
-                        $importedIds[] = $pokemon->getId();
-                        $totalImported++;
-                    } catch (\Exception $e) {
-                        $this->addFlash('error', "Failed to import card {$pokemon->getId()}: " . $e->getMessage());
-                    }
+            foreach ($data['data'] as $cardData) {
+                if ($totalImported >= 250) {
+                    break 2;
                 }
 
-                $this->addFlash('info', "Imported page $page: " . count($data['data']) . " cards");
+                if (!isset($cardData['id']) || empty($cardData['id'])) {
+                    $this->addFlash('warning', "Skipping card without ID: " . json_encode($cardData));
+                    continue;
+                }
 
-                $page++;
+                $pokemon = new Pokemon();
+                $pokemon->setId($cardData['id'])
+                    ->setName($cardData['name'] ?? 'Unknown')
+                    ->setSupertype($cardData['supertype'] ?? 'Unknown')
+                    ->setSubtypes($cardData['subtypes'] ?? [])
+                    ->setHp($cardData['hp'] ?? null)
+                    ->setTypes($cardData['types'] ?? [])
+                    ->setEvolvesFrom($cardData['evolvesFrom'] ?? null)
+                    ->setAbilities($cardData['abilities'] ?? [])
+                    ->setAttacks($cardData['attacks'] ?? [])
+                    ->setWeaknesses($cardData['weaknesses'] ?? [])
+                    ->setRetreatCost($cardData['retreatCost'] ?? [])
+                    ->setConvertedRetreatCost($cardData['convertedRetreatCost'] ?? null)
+                    ->setSet($cardData['set'] ?? [])
+                    ->setNumber($cardData['number'] ?? '')
+                    ->setArtist($cardData['artist'] ?? '')
+                    ->setRarity($cardData['rarity'] ?? '')
+                    ->setFlavorText($cardData['flavorText'] ?? null)
+                    ->setNationalPokedexNumbers($cardData['nationalPokedexNumbers'] ?? [])
+                    ->setLegalities($cardData['legalities'] ?? [])
+                    ->setImages([
+                        'small' => $cardData['images']['small'] ?? null,
+                        'large' => $cardData['images']['large'] ?? null
+                    ])
+                    ->setTcgplayer($cardData['tcgplayer'] ?? [])
+                    ->setCardmarket($cardData['cardmarket'] ?? []);
 
-                sleep(1);
+                $pokemonRepository->save($pokemon);
+                $importedIds[] = $pokemon->getId();
+                $totalImported++;
+            }
 
-            } while (count($data['data']) == $pageSize);
+            $this->addFlash('info', "Imported page $page: " . count($data['data']) . " cards");
+            $page++;
 
-            return $this->json([
-                'message' => 'Cards imported successfully', 
-                'count' => $totalImported,
-                'pages' => $page - 1,
-                'importedIds' => $importedIds
-            ]);
-        } catch (\Exception $e) {
-            return $this->json([
-                'error' => 'Import failed', 
-                'details' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ], 500);
-        }
+            sleep(1);
+
+        } while (count($data['data']) == $pageSize);
+
+        return $this->json([
+            'message' => 'Cards imported successfully', 
+            'count' => $totalImported,
+            'pages' => $page - 1,
+            'importedIds' => $importedIds
+        ]);
     }
 
     #[Route('', name: 'api_pokemon_list', methods: ['GET'])]
     public function listCards(PokemonRepository $pokemonRepository): JsonResponse
     {
         $pokemons = $pokemonRepository->findAll();
-        
+
         return $this->json($pokemons, 200, [], [
             'groups' => ['pokemon:read']
         ]);
@@ -125,12 +112,11 @@ class PokemonController extends AbstractController
     public function detail(string $id, PokemonRepository $pokemonRepository): JsonResponse
     {
         $pokemon = $pokemonRepository->find($id);
-        
+
         if (!$pokemon) {
-    
             $allPokemonIds = $pokemonRepository->findAll();
             $existingIds = array_map(fn($p) => $p->getId(), $allPokemonIds);
-            
+
             return $this->json([
                 'error' => 'Pokemon not found', 
                 'requestedId' => $id,

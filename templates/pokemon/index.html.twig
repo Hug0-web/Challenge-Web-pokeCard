@@ -129,74 +129,70 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const pokemonCards = document.querySelectorAll('.pokemon-card');
-            const modal = new bootstrap.Modal(document.getElementById('pokemonModal'));
+    document.addEventListener('DOMContentLoaded', function() {
+        const pokemonCards = document.querySelectorAll('.pokemon-card');
+        const modal = new bootstrap.Modal(document.getElementById('pokemonModal'));
 
-            pokemonCards.forEach(card => {
-                card.addEventListener('click', async function() {
-                    const pokemonId = this.dataset.pokemonId;
-                    try {
-                        const response = await fetch(`/api/pokemon/${pokemonId}`);
-                        const pokemon = await response.json();
-                        
-                        document.getElementById('modalCardName').textContent = pokemon.name;
-                        document.getElementById('modalCardImage').src = pokemon.images.large || pokemon.images.small;
-                        document.getElementById('modalCardTypes').textContent = pokemon.types ? pokemon.types.join(', ') : 'N/A';
-                        document.getElementById('modalCardSupertype').textContent = pokemon.supertype || 'N/A';
-                        document.getElementById('modalCardRarity').textContent = pokemon.rarity || 'N/A';
-                        document.getElementById('modalCardSet').textContent = pokemon.set ? pokemon.set.name : 'N/A';
+        pokemonCards.forEach(card => {
+            card.addEventListener('click', async function() {
+                const pokemonId = this.dataset.pokemonId;
+                const response = await fetch(`/api/pokemon/${pokemonId}`);
+                const pokemon = await response.json();
 
-                        const statsDiv = document.getElementById('modalCardStats');
-                        statsDiv.innerHTML = '';
-                        
-                        if (pokemon.hp) {
-                            statsDiv.innerHTML += `<p><strong>HP:</strong> ${pokemon.hp}</p>`;
-                        }
-                        
-                        if (pokemon.attacks) {
-                            statsDiv.innerHTML += '<p><strong>Attacks:</strong></p>';
-                            pokemon.attacks.forEach(attack => {
-                                statsDiv.innerHTML += `
-                                    <div class="ms-3 mb-2">
-                                        <strong>${attack.name}</strong><br>
-                                        Damage: ${attack.damage || 'N/A'}<br>
-                                        Cost: ${attack.cost ? attack.cost.join(', ') : 'N/A'}<br>
-                                        ${attack.text ? `Effect: ${attack.text}` : ''}
-                                    </div>
-                                `;
-                            });
-                        }
+                document.getElementById('modalCardName').textContent = pokemon.name;
+                document.getElementById('modalCardImage').src = pokemon.images.large || pokemon.images.small;
+                document.getElementById('modalCardTypes').textContent = pokemon.types ? pokemon.types.join(', ') : 'N/A';
+                document.getElementById('modalCardSupertype').textContent = pokemon.supertype || 'N/A';
+                document.getElementById('modalCardRarity').textContent = pokemon.rarity || 'N/A';
+                document.getElementById('modalCardSet').textContent = pokemon.set ? pokemon.set.name : 'N/A';
 
-                        if (pokemon.weaknesses) {
-                            statsDiv.innerHTML += '<p><strong>Weaknesses:</strong></p>';
-                            pokemon.weaknesses.forEach(weakness => {
-                                statsDiv.innerHTML += `
-                                    <div class="ms-3">
-                                        ${weakness.type}: ${weakness.value}
-                                    </div>
-                                `;
-                            });
-                        }
+                const statsDiv = document.getElementById('modalCardStats');
+                statsDiv.innerHTML = '';
 
-                        modal.show();
-                    } catch (error) {
-                        console.error('Error fetching pokemon details:', error);
-                    }
-                });
+                if (pokemon.hp) {
+                    statsDiv.innerHTML += `<p><strong>HP:</strong> ${pokemon.hp}</p>`;
+                }
+
+                if (pokemon.attacks) {
+                    statsDiv.innerHTML += '<p><strong>Attacks:</strong></p>';
+                    pokemon.attacks.forEach(attack => {
+                        statsDiv.innerHTML += `
+                            <div class="ms-3 mb-2">
+                                <strong>${attack.name}</strong><br>
+                                Damage: ${attack.damage || 'N/A'}<br>
+                                Cost: ${attack.cost ? attack.cost.join(', ') : 'N/A'}<br>
+                                ${attack.text ? `Effect: ${attack.text}` : ''}
+                            </div>
+                        `;
+                    });
+                }
+
+                if (pokemon.weaknesses) {
+                    statsDiv.innerHTML += '<p><strong>Weaknesses:</strong></p>';
+                    pokemon.weaknesses.forEach(weakness => {
+                        statsDiv.innerHTML += `
+                            <div class="ms-3">
+                                ${weakness.type}: ${weakness.value}
+                            </div>
+                        `;
+                    });
+                }
+
+                modal.show();
             });
         });
+    });
 
-        function goToPage(event) {
-            event.preventDefault();
-            const pageInput = document.getElementById('pageInput');
-            const page = parseInt(pageInput.value);
-            
-            if (page >= 1 && page <= {{ totalPages }}) {
-                window.location.href = "{{ path('homepage', {'page': ''}) }}" + page;
-            } else {
-                alert('Entrez un nombre de page valide entre 1 et {{ totalPages }}');
-            }
+    function goToPage(event) {
+        event.preventDefault();
+        const pageInput = document.getElementById('pageInput');
+        const page = parseInt(pageInput.value);
+
+        if (page >= 1 && page <= {{ totalPages }}) {
+            window.location.href = "{{ path('homepage', {'page': ''}) }}" + page;
+        } else {
+            alert('Entrez un nombre de page valide entre 1 et {{ totalPages }}');
         }
-    </script>
+    }
+</script>
 {% endblock %}
