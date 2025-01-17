@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
-use App\Service\PokemonTcgService;
+use App\Service\PokemonDB;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

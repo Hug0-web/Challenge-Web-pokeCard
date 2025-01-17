@@ -6,7 +6,7 @@ use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class PokemonTcgService
+class PokemonDB
 {
     private const API_URL = 'https://api.pokemontcg.io/v2';
     private HttpClientInterface $httpClient;
