@@ -3,34 +3,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/pokemon.css') }}">
-    <style>
-        .pokemon-card {
-            background-color: #212529;
-            border: 1px solid #495057;
-            transition: transform 0.3s ease;
-        }
-        .pokemon-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 6px rgba(255,255,255,0.1);
-        }
-        .page-link {
-            color: #f8f9fa;
-            background-color: #000;
-            border: 1px solid #495057;
-        }
-        .page-link:hover {
-            color: #adb5bd;
-            background-color: #212529;
-        }
-        .page-item.active .page-link {
-            color: #000;
-            background-color: #f8f9fa;
-            border-color: #f8f9fa;
-        }
-        .card-img-top.bg-secondary {
-            background-color: #495057 !important;
-        }
-    </style>
+
 {% endblock %}
 
 {% block title %}Pokémon Cards{% endblock %}

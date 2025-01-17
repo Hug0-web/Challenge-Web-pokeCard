@@ -64,7 +64,7 @@ body {
     
     .navbar-toggler-icon {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-    }/* Navbar Styling */
+    }
     .navbar {
         background: linear-gradient(to right, #FF0000, #990000) !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.2);
@@ -345,4 +345,31 @@ body {
 
 .btn-dark.dropdown-toggle:focus {
     box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.1);
+}
+
+.pokemon-card {
+    background-color: #212529;
+    border: 1px solid #495057;
+    transition: transform 0.3s ease;
+}
+.pokemon-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(255,255,255,0.1);
+}
+.page-link {
+    color: #f8f9fa;
+    background-color: #000;
+    border: 1px solid #495057;
+}
+.page-link:hover {
+    color: #adb5bd;
+    background-color: #212529;
+}
+.page-item.active .page-link {
+    color: #000;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+.card-img-top.bg-secondary {
+    background-color: #495057 !important;
 }
