@@ -33,11 +33,15 @@ DATABASE_URL="mysql://username:password@127.0.0.1:5432/db_name?serverVersion=16&
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
-6. Importez les cartes depuis l’API Pokémon en utilisant la commande Symfony :
+6. Importez les cartes depuis l’API Pokémon en utilisant la commande Symfony ( le script d'import est déjà limité à 250 ):
 ```
 curl -X POST http://localhost:8000/api/pokemon/import
 ```
-7. Démarrez le serveur Symfony :
+7. S'il y a un problème avec le curl faire la commande :
+Remove-Item alias:curl
+``` 
+```
+8. Démarrez le serveur Symfony :
 ```
 symfony serve
 ```
