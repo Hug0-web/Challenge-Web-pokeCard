@@ -38,8 +38,8 @@ php bin/console doctrine:migrations:migrate
 curl -X POST http://localhost:8000/api/pokemon/import
 ```
 7. S'il y a un problème avec le curl faire la commande :
+```
 Remove-Item alias:curl
-``` 
 ```
 8. Démarrez le serveur Symfony :
 ```
